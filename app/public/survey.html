@@ -5,13 +5,50 @@
     <meta charset="UTF-8">
     <title>FriendFinder</title>
     <script src="https://code.jquery.com/jquery.js"></script>
+    <style>
+        #modal {
+            border: 3px black solid;
+            width: 350px;
+            overflow: auto;
+            z-index: 3;
+            display: none;
+            position: absolute;
+            left: 30%;
+            top: 15%;
+            background-color: white;
+            padding-left:40px            
+        }
+
+        #cover {
+            background-color: grey;
+            width: 100%;
+            min-height: 179%;
+            z-index: 2;
+            display: none;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0.5
+        }
+
+        .dispImg{
+            width:200px;
+        }
+        .nameButton{
+            position:relative;
+            left:42px
+        }
+
+    </style>
 
 </head>
 
 <body>
 
+    <div id="cover"></div>
+    <div id="modal">
+    </div>
     <div class="container">
-
         <h2>Survey Questions</h2>
         <hr>
 
@@ -163,10 +200,7 @@
 
         <br>
         <br>
-<!-- <form action="/survey" method="POST"> -->
         <button id="submit">Submit</button>
-
-    <!-- </form> -->
 
         <hr>
         <div class="container">
@@ -177,46 +211,86 @@
     </div>
 
 
-    <script type="text/javascript">
+    <script type="text/javascript"> //client side script start
 
         $("#submit").on("click", function (event) {
+            window.scrollTo(0,0);
+            $("#modal").empty();
             event.preventDefault();
+            $("#modal").css("display", "block");
+            $("#cover").css("display", "block");
 
+            //Form scores from each questions into array 
             var scoresArray = [
-                        $("#q1").val(),
-                        $("#q2").val(),
-                        $("#q3").val(),
-                        $("#q4").val(),
-                        $("#q5").val(),
-                        $("#q6").val(),
-                        $("#q7").val(),
-                        $("#q8").val(),
-                        $("#q9").val(),
-                        $("#q10").val()
-                    ];
-                    
-            var scoresString ="";
-            for (var i=0, n=scoresArray.length;i<n; i++){
-                scoresString +=scoresArray[i]+" ";
+                $("#q1").val(),
+                $("#q2").val(),
+                $("#q3").val(),
+                $("#q4").val(),
+                $("#q5").val(),
+                $("#q6").val(),
+                $("#q7").val(),
+                $("#q8").val(),
+                $("#q9").val(),
+                $("#q10").val()
+            ];
+
+
+            //There is a bug in sending file through "Post" method
+            //Therefore, scores array needs to be converted into string form.        
+            var scoresString = "";
+            for (var i = 0, n = scoresArray.length; i < n; i++) {
+                scoresString += scoresArray[i];
             }
-            scoresString = scoresString.trim()         
+            scoresString = scoresString.trim()
 
+            //forming into object
+            var userData = {
+                name: $("#name").val(),
+                photo: $("#photo").val(),
+                scores: scoresString
+            };
+            console.log(scoresString)
+            //send to server
+            $.post("/api/friends", userData, function (data) {
 
-                var userData = {
-                    name: $("#name").val(),
-                    photo: $("#photo").val(),
-                    scores: scoresString
-                };
-         
-                $.post("/api/friends", userData, function (data) {
-                    
-                })
-                .done(function(res){
+            })
+                .done(function (res) { //receive response (matching data) from the server
                     console.log(res)
+
+                    var titleText = '<p><h2>You Have Following matches</h2></p><br>';
+                    $("#modal").append(titleText); //append title               
+                    
+                    for (var i=0, n=res.length;i<n;i++){
+                        var dispDiv = '<div id="'+i+'">';
+                        var imgMatch = '<img class="dispImg" id="img'+i+'" src="'+res[i].photo+'"><br>';
+                        var nameButton = '<button class="nameButton" val="#img'+i+'" id='+i+'">'+res[i].name+'</button><br>';
+                        var line = "<p>----------------------------------</p><br>";                        
+                        dispDiv = dispDiv + imgMatch + nameButton + line + "</div>" //add all above tags
+                        $("#modal").append(dispDiv); //display to modal
+                    }
                 })
 
 
         });
+
+        $(document).on("click",".nameButton",function(){       
+            var number = $(this).attr("val")
+            var imgSrc = $(number).attr("src")
+      
+            $("#modal").empty(); //empty modal display
+
+            var name = '<h2>'+$(this).val()+'</h2><br>';
+            var imgDisp = '<img class="dispImg" src="'+imgSrc+'"><br>';
+            var closeButton = '<button id="close">Close</button><br><br>'
+            var dispDiv = '<div><h1>Best Match</h1>'+name+imgDisp+closeButton;            
+            $("#modal").append(dispDiv) //append all above
+        })
+
+        $(document).on("click","#close",function(){ //clear all
+            $("#modal").empty();
+            $("#modal").css("display","none");
+            $("#cover").css("display","none");
+        })
     </script>
 
 </body>
