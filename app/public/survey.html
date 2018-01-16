@@ -16,7 +16,7 @@
             left: 30%;
             top: 15%;
             background-color: white;
-            padding-left:40px            
+            padding-left: 40px
         }
 
         #cover {
@@ -31,14 +31,14 @@
             opacity: 0.5
         }
 
-        .dispImg{
-            width:200px;
-        }
-        .nameButton{
-            position:relative;
-            left:42px
+        .dispImg {
+            width: 200px;
         }
 
+        .nameButton {
+            position: relative;
+            left: 42px
+        }
     </style>
 
 </head>
@@ -214,7 +214,7 @@
     <script type="text/javascript"> //client side script start
 
         $("#submit").on("click", function (event) {
-            window.scrollTo(0,0);
+            window.scrollTo(0, 0);
             $("#modal").empty();
             event.preventDefault();
             $("#modal").css("display", "block");
@@ -259,12 +259,12 @@
 
                     var titleText = '<p><h2>You Have Following matches</h2></p><br>';
                     $("#modal").append(titleText); //append title               
-                    
-                    for (var i=0, n=res.length;i<n;i++){
-                        var dispDiv = '<div id="'+i+'">';
-                        var imgMatch = '<img class="dispImg" id="img'+i+'" src="'+res[i].photo+'"><br>';
-                        var nameButton = '<button class="nameButton" val="#img'+i+'" id='+i+'">'+res[i].name+'</button><br>';
-                        var line = "<p>----------------------------------</p><br>";                        
+
+                    for (var i = 0, n = res.length; i < n; i++) {
+                        var dispDiv = '<div id="' + i + '">';
+                        var imgMatch = '<img class="dispImg" id="img' + i + '" src="' + res[i].photo + '"><br>';
+                        var nameButton = '<button class="nameButton" val="#img' + i + '" id=' + i + '">' + res[i].name + '</button><br>';
+                        var line = "<p>----------------------------------</p><br>";
                         dispDiv = dispDiv + imgMatch + nameButton + line + "</div>" //add all above tags
                         $("#modal").append(dispDiv); //display to modal
                     }
@@ -273,23 +273,22 @@
 
         });
 
-        $(document).on("click",".nameButton",function(){       
+        $(document).on("click", ".nameButton", function () {
             var number = $(this).attr("val")
             var imgSrc = $(number).attr("src")
-      
-            $("#modal").empty(); //empty modal display
 
-            var name = '<h2>'+$(this).val()+'</h2><br>';
-            var imgDisp = '<img class="dispImg" src="'+imgSrc+'"><br>';
+            var name = '<h2>' + $(this).text() + '</h2><br>';
+            var imgDisp = '<img class="dispImg" src="' + imgSrc + '"><br>';
             var closeButton = '<button id="close">Close</button><br><br>'
-            var dispDiv = '<div><h1>Best Match</h1>'+name+imgDisp+closeButton;            
+            var dispDiv = '<div><h1>Best Match</h1>' + name + imgDisp + closeButton;
+            $("#modal").empty(); //empty modal display            
             $("#modal").append(dispDiv) //append all above
         })
 
-        $(document).on("click","#close",function(){ //clear all
+        $(document).on("click", "#close", function () { //clear all
             $("#modal").empty();
-            $("#modal").css("display","none");
-            $("#cover").css("display","none");
+            $("#modal").css("display", "none");
+            $("#cover").css("display", "none");
         })
     </script>
 
