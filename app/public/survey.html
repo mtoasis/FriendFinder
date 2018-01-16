@@ -163,8 +163,10 @@
 
         <br>
         <br>
-
+<!-- <form action="/survey" method="POST"> -->
         <button id="submit">Submit</button>
+
+    <!-- </form> -->
 
         <hr>
         <div class="container">
@@ -180,10 +182,7 @@
         $("#submit").on("click", function (event) {
             event.preventDefault();
 
-                var userData = {
-                    name: $("#name").val(),
-                    photo: $("#photo").val(),
-                    scores: [
+            var scoresArray = [
                         $("#q1").val(),
                         $("#q2").val(),
                         $("#q3").val(),
@@ -194,13 +193,28 @@
                         $("#q8").val(),
                         $("#q9").val(),
                         $("#q10").val()
-                    ]
+                    ];
+                    
+            var scoresString ="";
+            for (var i=0, n=scoresArray.length;i<n; i++){
+                scoresString +=scoresArray[i]+" ";
+            }
+            scoresString = scoresString.trim()         
+
+
+                var userData = {
+                    name: $("#name").val(),
+                    photo: $("#photo").val(),
+                    scores: scoresString
                 };
-
+         
                 $.post("/api/friends", userData, function (data) {
+                    
+                })
+                .done(function(res){
+                    console.log(res)
+                })
 
-
-                });
 
         });
     </script>
